@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 class IntentRequest(BaseModel):
     text: str
-    customer_domain: str
+    account_name: str
 
 
 class IntentResponse(BaseModel):

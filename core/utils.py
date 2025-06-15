@@ -52,22 +52,22 @@ def get_dataset_from_azure(
     return pd.read_csv(blob_data.content_as_text())
 
 
-def get_tenant_dataset_path(tenant_id: str) -> str:
+def get_tenant_dataset_path(account_name: str) -> str: # Changed tenant_id to account_name
     """
-    Constructs and returns the path to the tenant's specific dataset CSV file.
+    Constructs and returns the path to the account's specific dataset CSV file.
     It also checks if the file exists.
 
     Args:
-        tenant_id (str): The identifier for the tenant.
+        account_name (str): The identifier for the account/tenant. # Changed tenant_id to account_name
 
     Returns:
-        str: The path to the tenant's dataset file.
+        str: The path to the account's dataset file. # Changed tenant to account
 
     Raises:
-        FileNotFoundError: If the tenant-specific dataset file does not exist.
+        FileNotFoundError: If the account-specific dataset file does not exist. # Changed tenant to account
     """
-    # Construct the path to the tenant's specific dataset file
-    # Assumes tenant datasets are stored in the 'dataset/' directory named as '{tenant_id}_dataset.csv'
+    # Construct the path to the account's specific dataset file
+    # Assumes account datasets are stored in the 'dataset/' directory named as '{account_name}_dataset.csv'
     # settings.DATASET_PATH currently points to "datasets/combined_dataset.csv"
     # We'll use the directory part of DATASET_PATH or assume "dataset/" if it's not structured as a dir.
 
@@ -75,12 +75,12 @@ def get_tenant_dataset_path(tenant_id: str) -> str:
     if not base_dataset_dir: # If DATASET_PATH is just a filename like "combined_dataset.csv"
         base_dataset_dir = "dataset" # Default to "dataset/"
 
-    tenant_dataset_filename = f"{tenant_id}_dataset.csv"
+    tenant_dataset_filename = f"{account_name}_dataset.csv" # Changed tenant_id to account_name
     tenant_dataset_file_path = os.path.join(base_dataset_dir, tenant_dataset_filename)
 
     if not os.path.exists(tenant_dataset_file_path):
         raise FileNotFoundError(
-            f"Dataset file not found for tenant '{tenant_id}' at {tenant_dataset_file_path}"
+            f"Dataset file not found for account '{account_name}' at {tenant_dataset_file_path}" # Changed tenant_id to account_name
         )
 
     # For now, this function will focus on local file paths.

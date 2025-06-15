@@ -1,7 +1,6 @@
 python-dotenv
 bump2version
 fastapi[standard]
-transformers
 torch
 pandas
 scikit-learn

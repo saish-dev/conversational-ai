@@ -4,16 +4,17 @@ __copyright__ = "Copyright 2025, Trellissoft"
 import torch
 import joblib
 import pandas as pd
+import os # Added for os.makedirs
 from sklearn.preprocessing import LabelEncoder
 from torch.utils.data import Dataset
 from transformers import (
     RobertaTokenizer,
-    RobertaForSequenceClassification,
     Trainer,
     TrainingArguments,
 )
+from transformers.adapters import RobertaModelWithHeads # Added for adapter support
 from config.settings import settings
-from core.utils import get_combined_dataset
+from core.utils import get_tenant_dataset_path, load_local_dataset # Updated import
 
 
 class IntentDataset(Dataset):
@@ -78,14 +79,16 @@ class IntentDataset(Dataset):
         return len(self.labels)
 
 
-def train_model():
+def train_model(tenant_id: str):
     """
-    Train the intent classification model using the combined dataset.
+    Train the intent classification model for a specific tenant using adapters.
 
-    This function loads the dataset, preprocesses the data using a tokenizer
-    and label encoder, initializes the model with the appropriate number of
-    labels, and trains the model using specified training arguments.
-    The trained model and the label encoder are saved to disk.
+    This function loads the dataset, filters it for the given tenant_id,
+    preprocesses the data, loads a base RoBERTa model, adds and trains an
+    adapter for the tenant, and saves the trained adapter and label encoder.
+
+    Args:
+        tenant_id (str): The identifier for the tenant.
 
     Returns:
         None
@@ -94,44 +97,74 @@ def train_model():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    # Load and preprocess the dataset
-    dataset = get_combined_dataset()
-    df = pd.read_csv(dataset)
+    # Load tenant-specific dataset
+    try:
+        tenant_dataset_file_path = get_tenant_dataset_path(tenant_id)
+        # Assuming load_local_dataset is appropriate for loading the tenant-specific file
+        # If Azure loading is needed for tenant-specific files, this part needs adjustment
+        df = load_local_dataset(tenant_dataset_file_path)
+    except FileNotFoundError as e:
+        print(e)
+        print(f"Skipping training for tenant {tenant_id} due to missing dataset.")
+        return
+
+    if df.empty:
+        print(f"No data found for tenant_id: {tenant_id} in {tenant_dataset_file_path}. Skipping training.")
+        return
+
+    # The DataFrame should already be tenant-specific, but ensure 'domain' column exists if used by IntentDataset
+    # For IntentDataset: texts, labels, domains. 'domains' list can be df["domain"].tolist() or [tenant_id] * len(texts)
     texts = df["text"].tolist()
     intents = df["intent"].tolist()
-    domains = df["domain"].tolist()  # New column: domain
+    domains = df["domain"].tolist()
 
     # Encode the intent labels
     label_encoder = LabelEncoder()
     labels = label_encoder.fit_transform(intents)
+    num_labels = len(set(labels))
 
     # Initialize the tokenizer and dataset
-    tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
-    dataset = IntentDataset(texts, labels, domains, tokenizer)
+    tokenizer = RobertaTokenizer.from_pretrained(settings.BASE_MODEL_NAME)
+    intent_dataset = IntentDataset(texts, labels, domains, tokenizer)
 
-    # Load the model with the appropriate number of labels
-    model = RobertaForSequenceClassification.from_pretrained(
-        "roberta-base", num_labels=len(set(labels))
+    # Load the base RoBERTa model with a prediction head
+    model = RobertaModelWithHeads.from_pretrained(
+        settings.BASE_MODEL_NAME, num_labels=num_labels
     )
+
+    # Add a new adapter for the tenant
+    model.add_adapter(tenant_id, config=settings.ADAPTER_CONFIG_STRING)
+    # Activate the adapter for training
+    model.train_adapter(tenant_id)
 
     # Move the model to the appropriate device (GPU/CPU)
     model.to(device)
 
+    # Define tenant-specific paths
+    tenant_model_path = os.path.join(settings.MODEL_PATH, tenant_id)
+    adapter_path = os.path.join(tenant_model_path, "adapter")
+    label_encoder_path = os.path.join(tenant_model_path, "label_encoder.pkl")
+
+    # Create directories if they don't exist
+    os.makedirs(adapter_path, exist_ok=True)
+
     # Define training arguments
     training_args = TrainingArguments(
-        output_dir=settings.MODEL_PATH,
+        output_dir=adapter_path, # Output directory for adapter checkpoints
         num_train_epochs=3,
         per_device_train_batch_size=8,
         save_strategy="epoch",
-        logging_dir="models/logs",
+        logging_dir=os.path.join(settings.MODEL_PATH, "logs", tenant_id), # Tenant-specific logs
         logging_steps=10,
         save_total_limit=1,
     )
 
     # Initialize Trainer and start training
-    trainer = Trainer(model=model, args=training_args, train_dataset=dataset)
+    trainer = Trainer(model=model, args=training_args, train_dataset=intent_dataset)
     trainer.train()
 
-    # Save the trained model and label encoder
-    model.save_pretrained(settings.MODEL_PATH)
-    joblib.dump(label_encoder, settings.LABEL_ENCODER_PATH)
+    # Save the trained adapter and label encoder
+    model.save_adapter(adapter_path, tenant_id)
+    joblib.dump(label_encoder, label_encoder_path)
+    print(f"Adapter for tenant {tenant_id} saved to {adapter_path}")
+    print(f"Label encoder for tenant {tenant_id} saved to {label_encoder_path}")

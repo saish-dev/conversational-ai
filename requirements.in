@@ -6,3 +6,4 @@ torch
 pandas
 scikit-learn
 azure-storage-blob
+adapter-transformers

@@ -1,0 +1,198 @@
+keywords,intent_name
+I want to check the shipping status.,track_order
+Show me some new shoes.,browse_products
+I'd like to return my order.,return_item
+I'm looking for a new jacket.,browse_products
+How can I send back an item?,return_item
+Can I see the latest electronics?,browse_products
+I'd like to return my order.,return_item
+Can I see the latest electronics?,browse_products
+I want to return a product.,return_item
+Track my package.,track_order
+How can I send back an item?,return_item
+I'd like to return my order.,return_item
+I want to return a product.,return_item
+Can I see the latest electronics?,browse_products
+I want to return a product.,return_item
+Show me some new shoes.,browse_products
+I want to return a product.,return_item
+I want to return a product.,return_item
+I want to check the shipping status.,track_order
+How can I send back an item?,return_item
+Help me with a return.,return_item
+I want to check the shipping status.,track_order
+I want to check the shipping status.,track_order
+How can I send back an item?,return_item
+Can I see the latest electronics?,browse_products
+Show me some new shoes.,browse_products
+Show me some new shoes.,browse_products
+Where is my order?,track_order
+How can I send back an item?,return_item
+What clothes are on sale?,browse_products
+I'm looking for a new jacket.,browse_products
+Track my package.,track_order
+Is my delivery on the way?,track_order
+I'd like to return my order.,return_item
+What clothes are on sale?,browse_products
+I'd like to return my order.,return_item
+I want to check the shipping status.,track_order
+Help me with a return.,return_item
+What clothes are on sale?,browse_products
+Can I see the latest electronics?,browse_products
+I want to return a product.,return_item
+What clothes are on sale?,browse_products
+I want to check the shipping status.,track_order
+Show me some new shoes.,browse_products
+I want to return a product.,return_item
+I want to return a product.,return_item
+I want to check the shipping status.,track_order
+Where is my order?,track_order
+Track my package.,track_order
+I'd like to return my order.,return_item
+I'm looking for a new jacket.,browse_products
+Help me with a return.,return_item
+How can I send back an item?,return_item
+Where is my order?,track_order
+Track my package.,track_order
+Show me some new shoes.,browse_products
+Show me some new shoes.,browse_products
+Help me with a return.,return_item
+I'd like to return my order.,return_item
+How can I send back an item?,return_item
+I want to check the shipping status.,track_order
+I want to check the shipping status.,track_order
+Is my delivery on the way?,track_order
+Where is my order?,track_order
+Is my delivery on the way?,track_order
+Where is my order?,track_order
+I want to check the shipping status.,track_order
+Show me some new shoes.,browse_products
+Help me with a return.,return_item
+Where is my order?,track_order
+I'd like to return my order.,return_item
+Help me with a return.,return_item
+Is my delivery on the way?,track_order
+Is my delivery on the way?,track_order
+Show me some new shoes.,browse_products
+Show me some new shoes.,browse_products
+Help me with a return.,return_item
+I want to return a product.,return_item
+How can I send back an item?,return_item
+Show me some new shoes.,browse_products
+I want to return a product.,return_item
+Track my package.,track_order
+I'm looking for a new jacket.,browse_products
+Show me some new shoes.,browse_products
+Where is my order?,track_order
+I'm looking for a new jacket.,browse_products
+Can I see the latest electronics?,browse_products
+What clothes are on sale?,browse_products
+Track my package.,track_order
+Is my delivery on the way?,track_order
+Help me with a return.,return_item
+I want to check the shipping status.,track_order
+I want to check the shipping status.,track_order
+Where is my order?,track_order
+I'd like to return my order.,return_item
+I'd like to return my order.,return_item
+Can I see the latest electronics?,browse_products
+Can I see the latest electronics?,browse_products
+Can I see the latest electronics?,browse_products
+Track my package.,track_order
+I'm looking for a new jacket.,browse_products
+Track my package.,track_order
+I want to check the shipping status.,track_order
+I'd like to return my order.,return_item
+I want to return a product.,return_item
+Show me some new shoes.,browse_products
+Where is my order?,track_order
+I'm looking for a new jacket.,browse_products
+I want to check the shipping status.,track_order
+Track my package.,track_order
+Can I see the latest electronics?,browse_products
+Track my package.,track_order
+I'd like to return my order.,return_item
+I'm looking for a new jacket.,browse_products
+What clothes are on sale?,browse_products
+I'd like to return my order.,return_item
+I'm looking for a new jacket.,browse_products
+What clothes are on sale?,browse_products
+Track my package.,track_order
+Is my delivery on the way?,track_order
+I want to check the shipping status.,track_order
+How can I send back an item?,return_item
+Help me with a return.,return_item
+How can I send back an item?,return_item
+Help me with a return.,return_item
+Show me some new shoes.,browse_products
+Help me with a return.,return_item
+Can I see the latest electronics?,browse_products
+I'd like to return my order.,return_item
+I want to return a product.,return_item
+Is my delivery on the way?,track_order
+Show me some new shoes.,browse_products
+I'm looking for a new jacket.,browse_products
+How can I send back an item?,return_item
+Show me some new shoes.,browse_products
+Is my delivery on the way?,track_order
+Can I see the latest electronics?,browse_products
+Show me some new shoes.,browse_products
+I'm looking for a new jacket.,browse_products
+What clothes are on sale?,browse_products
+What clothes are on sale?,browse_products
+Show me some new shoes.,browse_products
+Can I see the latest electronics?,browse_products
+I'm looking for a new jacket.,browse_products
+What clothes are on sale?,browse_products
+What clothes are on sale?,browse_products
+Help me with a return.,return_item
+I'm looking for a new jacket.,browse_products
+I want to check the shipping status.,track_order
+What clothes are on sale?,browse_products
+Show me some new shoes.,browse_products
+I'd like to return my order.,return_item
+I'm looking for a new jacket.,browse_products
+I want to return a product.,return_item
+Can I see the latest electronics?,browse_products
+I'm looking for a new jacket.,browse_products
+I want to check the shipping status.,track_order
+I want to return a product.,return_item
+I'd like to return my order.,return_item
+I'm looking for a new jacket.,browse_products
+What clothes are on sale?,browse_products
+Track my package.,track_order
+Is my delivery on the way?,track_order
+I want to check the shipping status.,track_order
+How can I send back an item?,return_item
+Help me with a return.,return_item
+Show me some new shoes.,browse_products
+Help me with a return.,return_item
+I'm looking for a new jacket.,browse_products
+What clothes are on sale?,browse_products
+What clothes are on sale?,browse_products
+I want to check the shipping status.,track_order
+I want to return a product.,return_item
+I'd like to return my order.,return_item
+How can I send back an item?,return_item
+I'd like to return my order.,return_item
+Show me some new shoes.,browse_products
+Is my delivery on the way?,track_order
+Can I see the latest electronics?,browse_products
+What clothes are on sale?,browse_products
+Can I see the latest electronics?,browse_products
+I'm looking for a new jacket.,browse_products
+What clothes are on sale?,browse_products
+Show me some new shoes.,browse_products
+What clothes are on sale?,browse_products
+I'm looking for a new jacket.,browse_products
+Track my package.,track_order
+I want to check the shipping status.,track_order
+I'd like to return my order.,return_item
+Show me some new shoes.,browse_products
+I'm looking for a new jacket.,browse_products
+I want to check the shipping status.,track_order
+Track my package.,track_order
+I want to return a product.,return_item
+I'd like to return my order.,return_item
+I want to check the shipping status.,track_order
+I want to check the shipping status.,track_order

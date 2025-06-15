@@ -111,9 +111,9 @@ def train_model(account_name: str):
         return
 
     # The DataFrame should already be account-specific.
-    # It should contain 'keywords' and 'intent' columns.
+    # It should contain 'keywords' and 'intent_name' columns.
     texts = df["keywords"].tolist() # Changed from df["text"]
-    intents = df["intent"].tolist()
+    intents = df["intent_name"].tolist() # Changed from df["intent"]
     # domains = df["domain"].tolist() # Removed, as domain info is not used in tokenizer
 
     # Encode the intent labels

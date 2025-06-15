@@ -1,0 +1,15 @@
+services:
+  nlp-service:
+    build: .
+    container_name: nlp-service
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    restart: always
+
+networks:
+  conversational-ai-network:
+    external: true

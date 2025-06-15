@@ -52,27 +52,45 @@ def get_dataset_from_azure(
     return pd.read_csv(blob_data.content_as_text())
 
 
-def get_combined_dataset():
+def get_tenant_dataset_path(tenant_id: str) -> str:
     """
-    Retrieve the combined dataset based on the environment.
+    Constructs and returns the path to the tenant's specific dataset CSV file.
+    It also checks if the file exists.
 
-    In production/UAT environments, the dataset is retrieved from an Azure Blob
-    storage. In other environments, the dataset is loaded from a local file
-    path.
+    Args:
+        tenant_id (str): The identifier for the tenant.
 
     Returns:
-        pd.DataFrame: DataFrame containing the combined dataset.
+        str: The path to the tenant's dataset file.
+
+    Raises:
+        FileNotFoundError: If the tenant-specific dataset file does not exist.
     """
-    # Check if the dataset is from remote or local path
-    azure_connection_string = settings.AZURE_CONNECTION_STRING
-    container_name = settings.AZURE_CONTAINER_NAME
-    dataset_path = settings.DATASET_PATH
-    if settings.ENVIRONMENT in ["production", "uat"]:
-        # Retrieve the dataset from the Azure Blob storage
-        return get_dataset_from_azure(
-            azure_connection_string, container_name, dataset_path
+    # Construct the path to the tenant's specific dataset file
+    # Assumes tenant datasets are stored in the 'dataset/' directory named as '{tenant_id}_dataset.csv'
+    # settings.DATASET_PATH currently points to "datasets/combined_dataset.csv"
+    # We'll use the directory part of DATASET_PATH or assume "dataset/" if it's not structured as a dir.
+
+    base_dataset_dir = os.path.dirname(settings.DATASET_PATH)
+    if not base_dataset_dir: # If DATASET_PATH is just a filename like "combined_dataset.csv"
+        base_dataset_dir = "dataset" # Default to "dataset/"
+
+    tenant_dataset_filename = f"{tenant_id}_dataset.csv"
+    tenant_dataset_file_path = os.path.join(base_dataset_dir, tenant_dataset_filename)
+
+    if not os.path.exists(tenant_dataset_file_path):
+        raise FileNotFoundError(
+            f"Dataset file not found for tenant '{tenant_id}' at {tenant_dataset_file_path}"
         )
 
-    else:
-        # Load the dataset from a local file path
-        return load_local_dataset(dataset_path)
+    # For now, this function will focus on local file paths.
+    # Azure logic from the old get_combined_dataset might be integrated here or in training.py later if needed.
+    # if settings.ENVIRONMENT in ["production", "uat"]:
+    #     # This part would need to be adapted to fetch tenant-specific files from Azure
+    #     # For example, blob_name might become f"{tenant_id}_dataset.csv"
+    #     # return get_dataset_from_azure(
+    #     # azure_connection_string, container_name, tenant_dataset_filename
+    #     # )
+    #     pass # Placeholder for Azure logic
+
+    return tenant_dataset_file_path

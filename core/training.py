@@ -19,35 +19,33 @@ from core.utils import get_tenant_dataset_path, load_local_dataset # Updated imp
 
 class IntentDataset(Dataset):
     """
-    A custom Dataset class for handling text, domain, and label data for
-    intent classification.
+    A custom Dataset class for handling text and label data for
+    intent classification. (Removed domain from description)
 
     Attributes:
         encodings (dict): Tokenized inputs including input IDs and attention
         masks.
         labels (List[int]): List of intent labels.
-        domains (List[str]): List of domains corresponding to each text.
     """
 
-    def __init__(self, texts, labels, domains, tokenizer):
+    def __init__(self, texts, labels, tokenizer): # Removed domains
         """
-        Initialize the IntentDataset with text, domain, labels, and tokenizer.
+        Initialize the IntentDataset with text, labels, and tokenizer.
 
         Args:
-            texts (List[str]): The input texts.
+            texts (List[str]): The input texts (keywords).
             labels (List[int]): The intent labels for each text.
-            domains (List[str]): The domain information for each text.
             tokenizer: The tokenizer used to encode the text data.
         """
-        # Concatenate domain and text for each entry
+        # Tokenize the texts (keywords) directly
         self.encodings = tokenizer(
-            [f"{domain} {text}" for domain, text in zip(domains, texts)],
+            texts, # Changed from concatenating domain and text
             truncation=True,
             padding=True,
             max_length=128,
         )
         self.labels = labels
-        self.domains = domains
+        # self.domains = domains # Removed
 
     def __getitem__(self, idx):
         """
@@ -57,8 +55,8 @@ class IntentDataset(Dataset):
             idx (int): Index of the item to be retrieved.
 
         Returns:
-            dict: A dictionary containing input IDs, attention mask, label,
-            and domain.
+            dict: A dictionary containing input IDs, attention mask, and label.
+            (Removed domain from returned dict)
         """
         return {
             "input_ids": torch.tensor(self.encodings["input_ids"][idx]),
@@ -66,7 +64,7 @@ class IntentDataset(Dataset):
                 self.encodings["attention_mask"][idx]
             ),
             "labels": torch.tensor(self.labels[idx]),
-            "domain": self.domains[idx],  # Still storing domain information
+            # "domain": self.domains[idx],  # Removed domain information
         }
 
     def __len__(self):
@@ -79,16 +77,16 @@ class IntentDataset(Dataset):
         return len(self.labels)
 
 
-def train_model(tenant_id: str):
+def train_model(account_name: str):
     """
-    Train the intent classification model for a specific tenant using adapters.
+    Train the intent classification model for a specific account_name using adapters.
 
-    This function loads the dataset, filters it for the given tenant_id,
+    This function loads the dataset for the given account_name,
     preprocesses the data, loads a base RoBERTa model, adds and trains an
-    adapter for the tenant, and saves the trained adapter and label encoder.
+    adapter for the account_name, and saves the trained adapter and label encoder.
 
     Args:
-        tenant_id (str): The identifier for the tenant.
+        account_name (str): The identifier for the account/tenant.
 
     Returns:
         None
@@ -97,26 +95,26 @@ def train_model(tenant_id: str):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    # Load tenant-specific dataset
+    # Load account-specific dataset
     try:
-        tenant_dataset_file_path = get_tenant_dataset_path(tenant_id)
+        tenant_dataset_file_path = get_tenant_dataset_path(account_name) # Changed tenant_id to account_name
         # Assuming load_local_dataset is appropriate for loading the tenant-specific file
         # If Azure loading is needed for tenant-specific files, this part needs adjustment
         df = load_local_dataset(tenant_dataset_file_path)
     except FileNotFoundError as e:
         print(e)
-        print(f"Skipping training for tenant {tenant_id} due to missing dataset.")
+        print(f"Skipping training for account {account_name} due to missing dataset.") # Changed tenant_id to account_name
         return
 
     if df.empty:
-        print(f"No data found for tenant_id: {tenant_id} in {tenant_dataset_file_path}. Skipping training.")
+        print(f"No data found for account_name: {account_name} in {tenant_dataset_file_path}. Skipping training.") # Changed tenant_id to account_name
         return
 
-    # The DataFrame should already be tenant-specific, but ensure 'domain' column exists if used by IntentDataset
-    # For IntentDataset: texts, labels, domains. 'domains' list can be df["domain"].tolist() or [tenant_id] * len(texts)
-    texts = df["text"].tolist()
+    # The DataFrame should already be account-specific.
+    # It should contain 'keywords' and 'intent' columns.
+    texts = df["keywords"].tolist() # Changed from df["text"]
     intents = df["intent"].tolist()
-    domains = df["domain"].tolist()
+    # domains = df["domain"].tolist() # Removed, as domain info is not used in tokenizer
 
     # Encode the intent labels
     label_encoder = LabelEncoder()
@@ -125,25 +123,25 @@ def train_model(tenant_id: str):
 
     # Initialize the tokenizer and dataset
     tokenizer = RobertaTokenizer.from_pretrained(settings.BASE_MODEL_NAME)
-    intent_dataset = IntentDataset(texts, labels, domains, tokenizer)
+    intent_dataset = IntentDataset(texts, labels, tokenizer) # Removed domains argument
 
     # Load the base RoBERTa model with a prediction head
     model = RobertaModelWithHeads.from_pretrained(
         settings.BASE_MODEL_NAME, num_labels=num_labels
     )
 
-    # Add a new adapter for the tenant
-    model.add_adapter(tenant_id, config=settings.ADAPTER_CONFIG_STRING)
+    # Add a new adapter for the account
+    model.add_adapter(account_name, config=settings.ADAPTER_CONFIG_STRING) # Changed tenant_id to account_name
     # Activate the adapter for training
-    model.train_adapter(tenant_id)
+    model.train_adapter(account_name) # Changed tenant_id to account_name
 
     # Move the model to the appropriate device (GPU/CPU)
     model.to(device)
 
-    # Define tenant-specific paths
-    tenant_model_path = os.path.join(settings.MODEL_PATH, tenant_id)
-    adapter_path = os.path.join(tenant_model_path, "adapter")
-    label_encoder_path = os.path.join(tenant_model_path, "label_encoder.pkl")
+    # Define account-specific paths
+    account_model_path = os.path.join(settings.MODEL_PATH, account_name) # Changed tenant_id to account_name
+    adapter_path = os.path.join(account_model_path, "adapter")
+    label_encoder_path = os.path.join(account_model_path, "label_encoder.pkl")
 
     # Create directories if they don't exist
     os.makedirs(adapter_path, exist_ok=True)
@@ -154,7 +152,7 @@ def train_model(tenant_id: str):
         num_train_epochs=3,
         per_device_train_batch_size=8,
         save_strategy="epoch",
-        logging_dir=os.path.join(settings.MODEL_PATH, "logs", tenant_id), # Tenant-specific logs
+        logging_dir=os.path.join(settings.MODEL_PATH, "logs", account_name), # Account-specific logs, changed tenant_id
         logging_steps=10,
         save_total_limit=1,
     )
@@ -164,7 +162,7 @@ def train_model(tenant_id: str):
     trainer.train()
 
     # Save the trained adapter and label encoder
-    model.save_adapter(adapter_path, tenant_id)
+    model.save_adapter(adapter_path, account_name) # Changed tenant_id to account_name
     joblib.dump(label_encoder, label_encoder_path)
-    print(f"Adapter for tenant {tenant_id} saved to {adapter_path}")
-    print(f"Label encoder for tenant {tenant_id} saved to {label_encoder_path}")
+    print(f"Adapter for account {account_name} saved to {adapter_path}") # Changed tenant_id to account_name
+    print(f"Label encoder for account {account_name} saved to {label_encoder_path}") # Changed tenant_id to account_name

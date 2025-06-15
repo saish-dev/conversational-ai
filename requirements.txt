@@ -220,8 +220,7 @@ tqdm==4.67.1
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.51.2
-    # via -r requirements.in
+# transformers==4.51.2 # Removed as direct dependency, will be pulled by adapter-transformers
 triton==3.2.0
     # via torch
 typer==0.15.2

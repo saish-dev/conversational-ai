@@ -1,0 +1,71 @@
+keywords,intent_name
+Hello,greet
+Hi,greet
+Hey there,greet
+Greetings,greet
+Good morning,greet
+Good afternoon,greet
+Good evening,greet
+Hey,greet
+Hi there,greet
+Hello there,greet
+Can you help me?,ask_help
+I need assistance,ask_help
+Could you assist me?,ask_help
+I need some help,ask_help
+Can you assist?,ask_help
+Help me please,ask_help
+I need your help,ask_help
+Can you help?,ask_help
+Please help me,ask_help
+I need support,ask_help
+What is your name?,ask_info
+Tell me about your services,ask_info
+Who are you?,ask_info
+What do you do?,ask_info
+Give me information,ask_info
+Tell me more,ask_info
+What can you do?,ask_info
+What services do you offer?,ask_info
+Tell me about yourself,ask_info
+What are your features?,ask_info
+Goodbye,bye
+See you later,bye
+Bye,bye
+Catch you later,bye
+Talk to you later,bye
+See you soon,bye
+Farewell,bye
+Take care,bye
+Bye bye,bye
+Have a nice day,bye
+How do I reset my password?,reset_password
+I forgot my password,reset_password
+Reset my password,reset_password
+Help me reset my password,reset_password
+I can't remember my password,reset_password
+Password reset,reset_password
+Can you reset my password?,reset_password
+I need to reset my password,reset_password
+Forgot password,reset_password
+Assist me with password reset,reset_password
+What time is it?,ask_time
+Can you tell me the time?,ask_time
+Do you know the time?,ask_time
+Tell me the current time,ask_time
+What's the time?,ask_time
+Time please,ask_time
+Current time?,ask_time
+Could you tell me the time?,ask_time
+I need the time,ask_time
+Let me know the time,ask_time
+Tell me a joke,ask_joke
+Can you tell me a joke?,ask_joke
+Make me laugh,ask_joke
+Do you know any jokes?,ask_joke
+Say something funny,ask_joke
+I want to hear a joke,ask_joke
+Give me a joke,ask_joke
+Tell a funny joke,ask_joke
+Share a joke,ask_joke
+Do you have a joke?,ask_joke

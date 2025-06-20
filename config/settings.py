@@ -4,37 +4,61 @@ __copyright__ = "Copyright 2025, Trellissoft"
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables from .env file
+# Load environment variables from a .env file at the project root.
+# This makes it easy to configure the application without hardcoding
+# values.
+load_dotenv()
 
 
 class Settings:
-    # Model path where tenant-specific models (adapters) will be saved under subdirectories
+    """
+    Centralized configuration settings for the application.
+
+    This class reads configuration from environment variables, providing
+    default values for a standard development setup.
+    """
+
+    # --- Model and Adapter Configuration ---
+
+    # Base path where all models, adapters, and tenant-specific artifacts
+    # are stored. Each tenant will have a subdirectory here.
     MODEL_PATH = os.getenv("MODEL_PATH", "app/models/roberta")
 
-    # Name of the base transformer model
+    # The name of the foundational Hugging Face transformer model.
+    # All adapters are built on top of this model.
     BASE_MODEL_NAME = os.getenv("BASE_MODEL_NAME", "roberta-base")
 
-    # Default adapter configuration string
+    # The configuration for the adapter architecture (e.g., "pfeiffer",
+    # "houlsby"). This defines the structure and complexity of the
+    # adapter layers.
     ADAPTER_CONFIG_STRING = os.getenv("ADAPTER_CONFIG_STRING", "pfeiffer")
 
-    # Original combined dataset path. Now primarily serves as a base path for locating the 'dataset' directory
-    # where tenant-specific datasets (e.g., 'dataset/tenantA_dataset.csv') are stored.
-    # The combined file itself is not directly used by training/inference after tenant-specific split.
-    DATASET_PATH = os.getenv("DATASET_PATH", "datasets/combined_dataset.csv")
+    # --- Data and Logging Configuration ---
 
-    # Log path for training logs (base directory)
+    # The directory where tenant-specific datasets are stored. The format
+    # is expected to be {account_name}_dataset.csv.
+    DATASET_DIR = os.getenv("DATASET_DIR", "dataset")
+
+    # Path for storing training logs.
     LOGGING_PATH = os.getenv("LOGGING_PATH", "models/logs")
 
-    # Path for the old global label encoder (potentially obsolete, as encoders are now per-tenant)
-    LABEL_ENCODER_PATH = os.getenv(
-        "LABEL_ENCODER_PATH", "models/roberta/label_encoder.pkl"
-    )
+    # --- Azure Configuration ---
+
+    # The environment mode (e.g., "development", "production").
+    # This can be used to enable or disable certain features, like
+    # loading data from Azure.
     ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+
+    # Connection string for Azure Blob Storage, used for loading datasets
+    # in a production environment.
     AZURE_CONNECTION_STRING = os.getenv("AZURE_CONNECTION_STRING")
     AZURE_CONTAINER_NAME = os.getenv("AZURE_CONTAINER_NAME")
 
     class Config:
+        # Specifies the .env file to be used by Pydantic's BaseSettings.
         env_file = ".env"
 
 
+# Create a singleton instance of the settings to be used throughout the
+# application.
 settings = Settings()

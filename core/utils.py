@@ -52,45 +52,36 @@ def get_dataset_from_azure(
     return pd.read_csv(blob_data.content_as_text())
 
 
-def get_tenant_dataset_path(account_name: str) -> str: # Changed tenant_id to account_name
+def get_tenant_dataset_path(account_name: str) -> str:
     """
-    Constructs and returns the path to the account's specific dataset CSV file.
-    It also checks if the file exists.
+    Constructs and returns the path to an account's dataset file.
+
+    It assumes datasets are stored locally in the directory defined by
+    `settings.DATASET_DIR`, with a filename convention of
+    `{account_name}_dataset.csv`.
 
     Args:
-        account_name (str): The identifier for the account/tenant. # Changed tenant_id to account_name
+        account_name (str): The unique identifier for the account/tenant.
 
     Returns:
-        str: The path to the account's dataset file. # Changed tenant to account
+        The full path to the account's dataset file.
 
     Raises:
-        FileNotFoundError: If the account-specific dataset file does not exist. # Changed tenant to account
+        FileNotFoundError: If the dataset file does not exist.
     """
-    # Construct the path to the account's specific dataset file
-    # Assumes account datasets are stored in the 'dataset/' directory named as '{account_name}_dataset.csv'
-    # settings.DATASET_PATH currently points to "datasets/combined_dataset.csv"
-    # We'll use the directory part of DATASET_PATH or assume "dataset/" if it's not structured as a dir.
+    # In a production environment, this function could be extended to
+    # fetch data from a cloud source like Azure Blob Storage.
+    # if settings.ENVIRONMENT == "production":
+    #     # Logic to download from Azure and return a local path
+    #     pass
 
-    base_dataset_dir = os.path.dirname(settings.DATASET_PATH)
-    if not base_dataset_dir: # If DATASET_PATH is just a filename like "combined_dataset.csv"
-        base_dataset_dir = "dataset" # Default to "dataset/"
+    dataset_filename = f"{account_name}_dataset.csv"
+    dataset_path = os.path.join(settings.DATASET_DIR, dataset_filename)
 
-    tenant_dataset_filename = f"{account_name}_dataset.csv" # Changed tenant_id to account_name
-    tenant_dataset_file_path = os.path.join(base_dataset_dir, tenant_dataset_filename)
-
-    if not os.path.exists(tenant_dataset_file_path):
+    if not os.path.exists(dataset_path):
         raise FileNotFoundError(
-            f"Dataset file not found for account '{account_name}' at {tenant_dataset_file_path}" # Changed tenant_id to account_name
+            f"Dataset not found for account '{account_name}' at "
+            f"{dataset_path}"
         )
 
-    # For now, this function will focus on local file paths.
-    # Azure logic from the old get_combined_dataset might be integrated here or in training.py later if needed.
-    # if settings.ENVIRONMENT in ["production", "uat"]:
-    #     # This part would need to be adapted to fetch tenant-specific files from Azure
-    #     # For example, blob_name might become f"{tenant_id}_dataset.csv"
-    #     # return get_dataset_from_azure(
-    #     # azure_connection_string, container_name, tenant_dataset_filename
-    #     # )
-    #     pass # Placeholder for Azure logic
-
-    return tenant_dataset_file_path
+    return dataset_path
